@@ -18,6 +18,7 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
+      <SearchResults tracks={fakeResults.results}/>
       <h1>Vite + React</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
@@ -34,4 +35,32 @@ function App() {
   )
 }
 
+//used to test functionality and UI 
+const fakeResults = {
+  resultCount: 3,
+  results: [
+    {
+      trackId: 1,
+      trackName: "Blinding Lights",
+      artistName: "The Weeknd",
+      collectionName: "After Hours"
+    },
+    {
+      trackId: 2,
+      trackName: "Bad Guy",
+      artistName: "Billie Eilish",
+      collectionName: "When We All Fall Asleep"
+    },
+    {
+      trackId: 3,
+      trackName: "Levitating",
+      artistName: "Dua Lipa",
+      collectionName: "Future Nostalgia"
+    }
+  ]
+};
+
 export default App;
+
+
+
