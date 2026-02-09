@@ -3,10 +3,19 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import SearchBar from './Components/SearchBar';
-
+import Track from './Components/Track';
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [playList, setPlayList] = useState([]);
+    function addTrack(track) {
+      //since i havent made the playlist component yet am using this logic to handle adding tracks.
+      const newPlaylist = [ ...oldPlaylist, track ];
+      setPlayList(newPlaylist);
+    }
+    function removeTrack(track) {
+      //since i havent made the playlist component yet am using this logic to handle removing tracks.
+      const newPlayList = [oldPlaylist.filter(t =>  t.trackId !== track.trackID )];
+      setPlayList(newPlayList);
+    }
   return (
     <>
       <div>
@@ -31,6 +40,8 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <Track track={track} />
+
     </>
   )
 }
