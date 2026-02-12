@@ -10,7 +10,8 @@ function PlayList(props) {
          <Track
         key={track.trackId}
         track={track}
-        removeTrack={props.removeTrack} />
+        removeTrack={props.removeTrack}
+         />
             )) }
 
        </div> 

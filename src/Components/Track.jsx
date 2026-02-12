@@ -8,7 +8,8 @@ function Track(props) {
         <p>{props.track.trackName}</p>
         <p>{props.track.artistName}</p>
         <p>{props.track.collectionName}</p>
-    <button onClick={() => props.addTrack(props.track)}>Add</button> <button onClick={() =>props.removeTrack(props.track)}>Remove</button>
+        {props.addTrack ?  <button onClick={() => props.addTrack(props.track)}>Add</button> : null}
+        {props.removeTrack ? <button onClick={() =>props.removeTrack(props.track)}>Remove</button>: null} 
         </>
     );
 }
