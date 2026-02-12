@@ -1,15 +1,11 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import SearchBar from './Components/SearchBar';
-import Track from './Components/Track';
 import SearchResults from './Components/SearchResults';
 import PlayList from './Components/PlayList';
 
 function App() {
   const [playlist, setPlaylist] = useState([]);
-  const [track, setTrack] = useState();
     
   function addTrack(track) {
     // prevent duplicates 
@@ -36,7 +32,7 @@ function App() {
         addTrack={addTrack}
       />
 
-      <Playlist
+      <PlayList
         tracks={playlist}
         removeTrack={removeTrack}
       />
