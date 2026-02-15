@@ -10,7 +10,7 @@ function SearchResults(props) {
         track={track}
         addTrack={props.addTrack} />
             )) }
-
+    
        </div> 
     );
 }

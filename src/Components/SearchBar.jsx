@@ -1,21 +1,22 @@
 import React, {useState} from "react";
 
-function SearchBar() {
+function SearchBar({onSearch}) {
     const [input, setInput] = useState("");
     function handleSubmit(e) {
         e.preventDefault();
-
+        
         if(validateInput(input)) {
             return;
         } else {
             //placeholder logic to state that the search will continue.
             console.log("search will go on now");
+             onSearch(input);
         }
     }   
-    function validateInput(input) {
+    function validateInput(value) {
         const regExPattern = /^\s*$/;
 
-    if (input === "" || regExPattern.test(input)) {
+    if (value === "" || regExPattern.test(value)) {
         return true;   
     }
     return false;      

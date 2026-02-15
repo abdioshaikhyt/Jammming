@@ -6,6 +6,10 @@ import PlayList from './Components/PlayList';
 
 function App() {
   const [playlist, setPlaylist] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [playlistName, setPlaylistName] = useState("New Playlist");
+
+
     
   function addTrack(track) {
     // prevent duplicates 
@@ -18,23 +22,43 @@ function App() {
   }
      function removeTrack(track) {
     const newPlaylist = playlist.filter(
-      t => t.trackId !== track.trackId
+      t => t.trackId !== track.trackId  
     );
     setPlaylist(newPlaylist);
   }
 
+  function handleSearchSubmit(valueFromChild) {
+    setSearchTerm(valueFromChild);
+    console.log("Parent got search term:", valueFromChild);
+    
+    const cleanTerm = searchTerm.toLowerCase().trim();
+
+    const filteredTracks = fakeResults.results.filter(track => {
+      track.trackName.toLowerCase.includes(cleanTerm) ||
+      track.artistName.toLowerCase.includes(cleanTerm) ||
+      track.collectionName.toLowerCase.includes(cleanTerm)
+    });
+    setSearchTerm(filteredTracks);
+  }
+
+  function handleNameChange(newName) {
+    setPlaylistName(newName);
+  }
+
    return (
     <>
-      <SearchBar />
+      <SearchBar onSearch={handleSearchSubmit}/>
 
       <SearchResults
-        tracks={fakeResults.results}
+        tracks={filteredTracks}
         addTrack={addTrack}
       />
 
       <PlayList
         tracks={playlist}
         removeTrack={removeTrack}
+        playlistName={playlistName}
+        onNameChange={handleNameChange}
       />
     </>
   );
