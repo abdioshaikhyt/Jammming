@@ -30,21 +30,19 @@ function App() {
   function handleSearchSubmit(valueFromChild) {
     setSearchTerm(valueFromChild);
     console.log("Parent got search term:", valueFromChild);
-    
-    const cleanTerm = searchTerm.toLowerCase().trim();
-
-    const filteredTracks = fakeResults.results.filter(track => {
-      track.trackName.toLowerCase.includes(cleanTerm) ||
-      track.artistName.toLowerCase.includes(cleanTerm) ||
-      track.collectionName.toLowerCase.includes(cleanTerm)
-    });
-    setSearchTerm(filteredTracks);
+    setSearchTerm(valueFromChild);
   }
 
   function handleNameChange(newName) {
     setPlaylistName(newName);
   }
+const cleanTerm = searchTerm.toLowerCase().trim();
 
+    const filteredTracks = fakeResults.results.filter(track => {
+      track.trackName.toLowerCase().includes(cleanTerm) ||
+      track.artistName.toLowerCase().includes(cleanTerm) ||
+      track.collectionName.toLowerCase().includes(cleanTerm)
+    });
    return (
     <>
       <SearchBar onSearch={handleSearchSubmit}/>
