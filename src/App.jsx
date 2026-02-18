@@ -46,6 +46,21 @@ const filteredTracks = cleanTerm
     )
   : fakeResults.results;
 
+
+  function handleSavePlaylist() {
+  if (playlist.length === 0) {
+    alert("Your playlist is empty!");
+    return;
+  }
+
+  const trackIds = playlist.map(track => track.trackId);
+
+  alert(`Playlist "${playlistName}" saved with ${trackIds.length} tracks!`);
+
+  setPlaylist([]);
+  setPlaylistName("New Playlist");
+}
+
    return (
     <>
       <SearchBar onSearch={handleSearchSubmit}/>
@@ -60,6 +75,7 @@ const filteredTracks = cleanTerm
         removeTrack={removeTrack}
         playlistName={playlistName}
         onNameChange={handleNameChange}
+         onSave={handleSavePlaylist}
       />
     </>
   );

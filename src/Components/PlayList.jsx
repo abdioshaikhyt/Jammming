@@ -17,6 +17,9 @@ function PlayList(props) {
         removeTrack={props.removeTrack}
          />
             )) }
+            <button onClick={props.onSave}>
+  Save Playlist
+</button>
 
        </div> 
     );
