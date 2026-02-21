@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import SearchBar from './Components/SearchBar';
 import SearchResults from './Components/SearchResults';
@@ -8,7 +8,10 @@ function App() {
   const [playlist, setPlaylist] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [playlistName, setPlaylistName] = useState("New Playlist");
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  
 
     
   function addTrack(track) {
@@ -39,12 +42,12 @@ function App() {
 const cleanTerm = searchTerm.toLowerCase().trim();
 
 const filteredTracks = cleanTerm
-  ? fakeResults.results.filter(track =>
+  ? searchResults.filter(track =>
       track.trackName.toLowerCase().includes(cleanTerm) ||
       track.artistName.toLowerCase().includes(cleanTerm) ||
-      track.collectionName.toLowerCase().includes(cleanTerm)
+      (track.collectionName || "").toLowerCase().includes(cleanTerm)
     )
-  : fakeResults.results;
+  : searchResults;
 
 
   function handleSavePlaylist() {
@@ -52,7 +55,6 @@ const filteredTracks = cleanTerm
     alert("Your playlist is empty!");
     return;
   }
-
   const trackIds = playlist.map(track => track.trackId);
 
   alert(`Playlist "${playlistName}" saved with ${trackIds.length} tracks!`);
@@ -61,14 +63,60 @@ const filteredTracks = cleanTerm
   setPlaylistName("New Playlist");
 }
 
+function isInPlayList(track) {
+  const inPlayList = playlist.some(t => t.trackId === track.trackId);
+  return inPlayList;
+  }
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+
+    if (!searchTerm.trim()) {
+      setSearchResults([]);
+      setIsLoading(false);
+      return;
+    }
+    const fetchTracks = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const response = await fetch( `https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&entity=song&limit=20`
+      );
+      if(!response.ok) {
+        throw new Error("Network error failed");
+        
+      }
+        const data = await response.json();
+        setSearchResults(data.results);
+      } catch(err) {
+        setError("Something went wrong. Please try again");
+      } finally {
+        setIsLoading(false);
+
+      }
+    }
+    fetchTracks();
+
+  }, [searchTerm])
+
    return (
     <>
       <SearchBar onSearch={handleSearchSubmit}/>
 
+      {searchTerm.length === 0 ? (
+       null
+     ) : isLoading ? (
+      <p>Searching...</p>
+     ) : filteredTracks.length === 0 ? (
+         <p>No tracks found</p>
+     ) : (
       <SearchResults
         tracks={filteredTracks}
         addTrack={addTrack}
+        isInPlayList={isInPlayList}
       />
+     )}
 
       <PlayList
         tracks={playlist}
@@ -81,36 +129,8 @@ const filteredTracks = cleanTerm
   );
 }
 
-// fake data for development
-const fakeResults = {
-  resultCount: 3,
-  results: [
-    {
-      trackId: 1,
-      trackName: "Blinding Lights",
-      artistName: "The Weeknd",
-      collectionName: "After Hours",
-      artworkUrl100:
-        "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/3d/0b/25/3d0b25f7-9f7f-1f41-f0e6-2e07dcab1bda/20UMGIM03648.rgb.jpg/100x100bb.jpg"
-    },
-    {
-      trackId: 2,
-      trackName: "Bad Guy",
-      artistName: "Billie Eilish",
-      collectionName: "When We All Fall Asleep",
-      artworkUrl100:
-        "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/9c/6b/3b/9c6b3b5f-51c8-0a7f-d5f6-4e5dc9c4b7f7/19UMGIM28105.rgb.jpg/100x100bb.jpg"
-    },
-    {
-      trackId: 3,
-      trackName: "Levitating",
-      artistName: "Dua Lipa",
-      collectionName: "Future Nostalgia",
-      artworkUrl100:
-        "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/8a/3c/df/8a3cdf3b-50df-95f7-5e67-7c4f45b47a63/190295203536.jpg/100x100bb.jpg"
-    }
-  ]
-};
+
+
 
 export default App;
 
