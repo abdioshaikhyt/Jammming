@@ -1,18 +1,13 @@
-import Track from './Track';
+import TrackList  from './trackList';
 
 function SearchResults(props) {
   return (
        
         <div>
-            
-         {props.tracks.map(track => (
-         <Track
-        key={track.trackId}
-        track={track}
+         <TrackList
+        tracks={props.tracks}
         addTrack={props.addTrack}
-        isInPlayList={props.isInPlayList(track)} />
-            )) }
-    
+        isInPlayList={props.isInPlayList} />  
        </div> 
     );
 }

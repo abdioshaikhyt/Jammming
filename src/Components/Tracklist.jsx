@@ -1,4 +1,4 @@
-import React from "react";
+
 import Track from './Track';
 
 function TrackList(props) {
@@ -10,6 +10,7 @@ function TrackList(props) {
                   track={track}
                   addTrack={props.addTrack}
                   removeTrack={props.removeTrack}
+                  isInPlayList={props.isInPlayList}
                />
             </li>
          ))}

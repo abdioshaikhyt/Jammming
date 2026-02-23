@@ -1,4 +1,3 @@
-import React from "react";
 
 function Track(props) {
   
@@ -8,7 +7,7 @@ function Track(props) {
         <p>{props.track.trackName}</p>
         <p>{props.track.artistName}</p>
         <p>{props.track.collectionName}</p>
-        {(!props.isInPlayList && props.addTrack) ?  <button onClick={() => props.addTrack(props.track)}>Add</button> : null }
+        {<button disabled={props.isInPlayList(props.track)} onClick={() => props.addTrack(props.track)}> {props.isInPlayList(props.track) ? "Added" : "Add"}</button>}
         {props.removeTrack ? <button onClick={() =>props.removeTrack(props.track)}>Remove</button>: null} 
        
         </>

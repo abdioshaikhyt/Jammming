@@ -124,6 +124,7 @@ function isInPlayList(track) {
         playlistName={playlistName}
         onNameChange={handleNameChange}
          onSave={handleSavePlaylist}
+         isInPlayList={isInPlayList}
       />
     </>
   );

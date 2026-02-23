@@ -1,6 +1,4 @@
-import React from "react";
-import Track from './Track';
-
+import TrackList from './trackList';
 
 function PlayList(props) {
     return (
@@ -10,17 +8,11 @@ function PlayList(props) {
            </label>
            <input id="playListName" name="playListName" onChange={(e) =>props.onNameChange(e.target.value)} value={props.playListName}></input>
             <p></p>
-         {props.tracks.map(track => (
-         <Track
-        key={track.trackId}
-        track={track}
+        <TrackList
+        tracks={props.tracks}
         removeTrack={props.removeTrack}
-         />
-            )) }
-            <button onClick={props.onSave}>
-  Save Playlist
-</button>
-
+        isInPlayList={props.isInPlayList}/> 
+        <button onClick={props.onSave}>Save Playlist</button>
        </div> 
     );
 }
