@@ -8,131 +8,143 @@ function App() {
   const [playlist, setPlaylist] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [playlistName, setPlaylistName] = useState("New Playlist");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
-  
+  const [saveMessage, setSaveMessage] = useState("");
 
-    
+
   function addTrack(track) {
-    // prevent duplicates 
     if (playlist.some(t => t.trackId === track.trackId)) {
       return;
     }
 
-    const newPlaylist = [...playlist, track];
-    setPlaylist(newPlaylist);
+    setPlaylist(prev => [...prev, track]);
   }
-     function removeTrack(track) {
-    const newPlaylist = playlist.filter(
-      t => t.trackId !== track.trackId  
+
+  function removeTrack(track) {
+    setPlaylist(prev =>
+      prev.filter(t => t.trackId !== track.trackId)
     );
-    setPlaylist(newPlaylist);
   }
 
   function handleSearchSubmit(valueFromChild) {
     setSearchTerm(valueFromChild);
-    console.log("Parent got search term:", valueFromChild);
   }
 
   function handleNameChange(newName) {
     setPlaylistName(newName);
-    console.log(newName);
   }
-const cleanTerm = searchTerm.toLowerCase().trim();
-
-const filteredTracks = cleanTerm
-  ? searchResults.filter(track =>
-      track.trackName.toLowerCase().includes(cleanTerm) ||
-      track.artistName.toLowerCase().includes(cleanTerm) ||
-      (track.collectionName || "").toLowerCase().includes(cleanTerm)
-    )
-  : searchResults;
-
 
   function handleSavePlaylist() {
-  if (playlist.length === 0) {
-    alert("Your playlist is empty!");
-    return;
+    if (playlist.length === 0) return;
+
+    const playlistData = {
+      name: playlistName,
+      createdAt: new Date().toISOString(),
+      tracks: playlist
+    };
+
+    const jsonString = JSON.stringify(playlistData, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+
+    const safeFileName = playlistName.trim().replace(/\s+/g, "-") || "playlist";
+    link.download = `${safeFileName}.json`;
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setSaveMessage(`Playlist "${playlistName}" downloaded successfully!`);
+
+    setTimeout(() => {
+      setSaveMessage("");
+    }, 3000);
+
+    setPlaylist([]);
+    setPlaylistName("New Playlist");
   }
-  const trackIds = playlist.map(track => track.trackId);
 
-  alert(`Playlist "${playlistName}" saved with ${trackIds.length} tracks!`);
-
-  setPlaylist([]);
-  setPlaylistName("New Playlist");
-}
-
-function isInPlayList(track) {
-  const inPlayList = playlist.some(t => t.trackId === track.trackId);
-  return inPlayList;
+  function isInPlayList(track) {
+    return playlist.some(t => t.trackId === track.trackId);
   }
+
+
   useEffect(() => {
-    setIsLoading(true);
-    setError(null);
-
     if (!searchTerm.trim()) {
       setSearchResults([]);
-      setIsLoading(false);
       return;
     }
+
     const fetchTracks = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        
-        const response = await fetch( `https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&entity=song&limit=20`
-      );
-      if(!response.ok) {
-        throw new Error("Network error failed");
-        
-      }
+
+        const response = await fetch(
+          `https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&entity=song&limit=20`
+        );
+
+        if (!response.ok) {
+          throw new Error("Network error");
+        }
+
         const data = await response.json();
         setSearchResults(data.results);
-      } catch(err) {
-        setError("Something went wrong. Please try again");
+      } catch (err) {
+        setError("Something went wrong. Please try again.");
       } finally {
         setIsLoading(false);
-
       }
-    }
+    };
+
     fetchTracks();
+  }, [searchTerm]);
 
-  }, [searchTerm])
+  return (
+    <div className="app-container">
 
-   return (
-    <>
-      <SearchBar onSearch={handleSearchSubmit}/>
+      <div className="search-bar">
+        <SearchBar onSearch={handleSearchSubmit} />
+      </div>
 
-      {searchTerm.length === 0 ? (
-       null
-     ) : isLoading ? (
-      <p>Searching...</p>
-     ) : filteredTracks.length === 0 ? (
-         <p>No tracks found</p>
-     ) : (
-      <SearchResults
-        tracks={filteredTracks}
-        addTrack={addTrack}
-        isInPlayList={isInPlayList}
-      />
-     )}
+      <div className="content">
 
-      <PlayList
-        tracks={playlist}
-        removeTrack={removeTrack}
-        playlistName={playlistName}
-        onNameChange={handleNameChange}
-         onSave={handleSavePlaylist}
-         isInPlayList={isInPlayList}
-      />
-    </>
+        <div className="panel">
+          {isLoading ? (
+            <p>Searching...</p>
+          ) : error ? (
+            <p>{error}</p>
+          ) : (
+            <SearchResults
+              tracks={searchResults}
+              addTrack={addTrack}
+              isInPlayList={isInPlayList}
+            />
+          )}
+        </div>
+
+        <div className="panel">
+          <PlayList
+            tracks={playlist}
+            removeTrack={removeTrack}
+            playlistName={playlistName}
+            onNameChange={handleNameChange}
+            onSave={handleSavePlaylist}
+            isInPlayList={isInPlayList}
+            saveMessage={saveMessage}
+          />
+        </div>
+
+      </div>
+    </div>
   );
 }
 
-
-
-
 export default App;
-
-

@@ -7,12 +7,16 @@ function PlayList(props) {
            <label htmlFor="playListName">
            </label>
            <input id="playListName" name="playListName" onChange={(e) =>props.onNameChange(e.target.value)} value={props.playListName}></input>
-            <p></p>
+           {props.saveMessage.trim() && <p>{props.saveMessage}</p>}
         <TrackList
         tracks={props.tracks}
         removeTrack={props.removeTrack}
         isInPlayList={props.isInPlayList}/> 
-        <button onClick={props.onSave}>Save Playlist</button>
+        <button 
+            disabled={props.tracks.length === 0} 
+            onClick={() => props.onSave()}>
+            {props.tracks.length === 0 ? "Playlist is empty must have at least one track to save" : "Save to Local Storage"}
+        </button>
        </div> 
     );
 }
